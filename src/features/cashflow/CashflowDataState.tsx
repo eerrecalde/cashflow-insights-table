@@ -1,6 +1,7 @@
 "use client";
 
 import { useCashflowData } from "./useCashflowData";
+import { CashflowTable } from "./CashflowTable";
 
 function LoadingState() {
   return (
@@ -47,16 +48,5 @@ export function CashflowDataState() {
     );
   }
 
-  return (
-    <section
-      aria-label="Cashflow data ready"
-      className="rounded-lg border border-zinc-200 bg-white p-5"
-    >
-      <h1 className="text-lg font-semibold text-zinc-950">Cashflow insights</h1>
-      <p className="mt-1 text-sm text-zinc-600">
-        {data.periods.length} periods and {data.nodes.length} cashflow sections
-        loaded.
-      </p>
-    </section>
-  );
+  return <CashflowTable {...data} />;
 }
