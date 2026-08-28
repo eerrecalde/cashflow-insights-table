@@ -45,6 +45,17 @@ describe("CashflowTable", () => {
     }
   });
 
+  it("gives expandable rows an accessible, collapsed control", () => {
+    const markup = renderTable(getRootCashflowData());
+
+    expect(markup).toContain('aria-label="Expand Inflow"');
+    expect(markup).toContain('aria-label="Expand Outflow"');
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).toContain('type="button"');
+    expect(markup).toContain('<th scope="row"');
+    expect(markup).toContain(">Opening balance</th>");
+  });
+
   it("only includes descendants after their parent is expanded", () => {
     const root = getRootCashflowData();
     const children = new Map([["inflow", getCashflowChildren("inflow").nodes]]);

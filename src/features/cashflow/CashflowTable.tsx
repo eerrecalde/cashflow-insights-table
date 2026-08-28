@@ -105,9 +105,10 @@ function NodeRow({
       ? "border-emerald-200 bg-emerald-50/70"
       : "border-rose-200 bg-rose-50/70"
     : "border-zinc-100 bg-white";
+  const controlLabel = `${expanded ? "Collapse" : "Expand"} ${node.label}`;
 
   return (
-    <tr className={`border-y ${tone}`}>
+    <tr className={`border-y transition-colors ${tone}`}>
       <th
         scope="row"
         className={`sticky left-0 z-10 min-w-64 border-r border-inherit bg-inherit py-3 pr-5 text-left ${
@@ -120,11 +121,15 @@ function NodeRow({
         {node.hasChildren ? (
           <button
             type="button"
+            aria-label={controlLabel}
             aria-expanded={expanded}
-            className="inline-flex items-center gap-2 rounded text-left hover:text-zinc-600 focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:outline-none"
+            className="inline-flex items-center gap-2 rounded-md text-left underline-offset-4 hover:text-zinc-600 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-600 focus-visible:ring-offset-2 focus-visible:outline-none"
             onClick={() => onToggle(node)}
           >
-            <span aria-hidden="true" className="text-xs">
+            <span
+              aria-hidden="true"
+              className="grid size-4 place-items-center rounded-sm bg-zinc-200/70 text-[10px] leading-none text-zinc-700"
+            >
               {expanded ? "▾" : "▸"}
             </span>
             {node.label}
@@ -148,6 +153,7 @@ function LoadingChildrenRow({
   return (
     <tr
       aria-live="polite"
+      role="status"
       className="border-b border-zinc-100 bg-white text-zinc-500"
     >
       <td
@@ -236,6 +242,7 @@ export function CashflowTable({
 
       <div
         ref={scrollElementRef}
+        aria-busy={loadingParentIds.size > 0}
         className="max-h-[70vh] overflow-auto rounded-xl border border-zinc-200 bg-white shadow-sm"
       >
         <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-sm">
@@ -246,7 +253,7 @@ export function CashflowTable({
             <tr className="bg-zinc-50 text-xs font-medium tracking-wide text-zinc-500 uppercase">
               <th
                 scope="col"
-                className="sticky left-0 z-20 min-w-64 border-r border-b border-zinc-200 bg-zinc-50 px-5 py-3 text-left"
+                className="sticky top-0 left-0 z-30 min-w-64 border-r border-b border-zinc-200 bg-zinc-50 px-5 py-3 text-left"
               >
                 Cashflow category
               </th>
@@ -254,7 +261,7 @@ export function CashflowTable({
                 <th
                   key={period.id}
                   scope="col"
-                  className="min-w-36 border-b border-zinc-200 px-5 py-3 text-right"
+                  className="sticky top-0 z-20 min-w-36 border-b border-zinc-200 bg-zinc-50 px-5 py-3 text-right"
                 >
                   <time dateTime={period.date}>{period.label}</time>
                 </th>
