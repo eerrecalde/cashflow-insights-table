@@ -172,9 +172,9 @@ src/features/cashflow/
 
 Update this table as each follow-up package is implemented. Do not amend the completed challenge outcome log above.
 
-| Item | Planned outcome                       | Actual outcome / deviation | Reason                                                                                                                                                  |
-| ---- | ------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 7    | Extract pure cashflow table logic     | Implemented                | Extracted GBP formatting and visible/loading-row derivation into focused modules with direct unit coverage, preserving the table's rendering behaviour. |
-| 8    | Extract feature-owned row components  | Not started                | —                                                                                                                                                       |
-| 9    | Extract integration hooks and compose | Not started                | —                                                                                                                                                       |
-| 10   | Verify refactor                       | Not started                | —                                                                                                                                                       |
+| Item | Planned outcome                       | Actual outcome / deviation | Reason                                                                                                                                                                                       |
+| ---- | ------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7    | Extract pure cashflow table logic     | Implemented                | Extracted GBP formatting and visible/loading-row derivation into focused modules with direct unit coverage, preserving the table's rendering behaviour.                                      |
+| 8    | Extract feature-owned row components  | Implemented                | Extracted the header, opening-balance row, node row, loading row, and shared period-value cells into feature-local components, with direct tests for table and accessible-control semantics. |
+| 9    | Extract integration hooks and compose | Not started                | —                                                                                                                                                                                            |
+| 10   | Verify refactor                       | Not started                | —                                                                                                                                                                                            |
