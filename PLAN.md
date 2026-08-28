@@ -152,12 +152,12 @@ src/features/cashflow/
 
 ### Work packages
 
-| ID  | Task                                  | Done when                                                                                                                                                                                                                 |
-| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 7   | Extract pure cashflow table logic     | Currency formatting plus visible/loading-row derivation live in focused non-React modules; their tests move with them and cover the current behaviour.                                                                    |
-| 8   | Extract feature-owned row components  | The header, opening-balance row, node row, lazy-loading row, and reusable value cells live in `src/features/cashflow/components`; accessibility semantics remain covered by unit tests.                                   |
-| 9   | Extract integration hooks and compose | Child-query aggregation and virtualization each have a focused hook; `CashflowTable` is table composition only, with no behaviour change. Updated tests cover the same expansion, lazy-loading, and large-list behaviour. |
-| 10  | Verify refactor                       | All imports are feature-local, no premature generic components are introduced, and tests, format, lint, webpack production build, and manual interaction checks pass.                                                     |
+| ID  | Task                                  | Done when                                                                                                                                                                                                                                                                                                                                                                      |
+| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 7   | Extract pure cashflow table logic     | Currency formatting plus visible/loading-row derivation live in focused non-React modules; their tests move with them and cover the current behaviour.                                                                                                                                                                                                                         |
+| 8   | Extract feature-owned row components  | The header, opening-balance row, node row, lazy-loading row, and reusable value cells live in `src/features/cashflow/components`; accessibility semantics remain covered by unit tests.                                                                                                                                                                                        |
+| 9   | Extract integration hooks and compose | Child-query aggregation and virtualization each have a focused hook; `CashflowTable` is table composition only, with no behaviour change. Review the React Compiler compatibility warning from TanStack Virtual and either resolve it with a supported integration or document why it remains. Updated tests cover the same expansion, lazy-loading, and large-list behaviour. |
+| 10  | Verify refactor                       | All imports are feature-local, no premature generic components are introduced, and tests, format, lint, webpack production build, and manual interaction checks pass.                                                                                                                                                                                                          |
 
 ### Acceptance checklist
 
@@ -172,9 +172,9 @@ src/features/cashflow/
 
 Update this table as each follow-up package is implemented. Do not amend the completed challenge outcome log above.
 
-| Item | Planned outcome                       | Actual outcome / deviation | Reason |
-| ---- | ------------------------------------- | -------------------------- | ------ |
-| 7    | Extract pure cashflow table logic     | Not started                | —      |
-| 8    | Extract feature-owned row components  | Not started                | —      |
-| 9    | Extract integration hooks and compose | Not started                | —      |
-| 10   | Verify refactor                       | Not started                | —      |
+| Item | Planned outcome                       | Actual outcome / deviation | Reason                                                                                                                                                  |
+| ---- | ------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7    | Extract pure cashflow table logic     | Implemented                | Extracted GBP formatting and visible/loading-row derivation into focused modules with direct unit coverage, preserving the table's rendering behaviour. |
+| 8    | Extract feature-owned row components  | Not started                | —                                                                                                                                                       |
+| 9    | Extract integration hooks and compose | Not started                | —                                                                                                                                                       |
+| 10   | Verify refactor                       | Not started                | —                                                                                                                                                       |

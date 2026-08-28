@@ -4,70 +4,21 @@ import { useQueries } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useReducer, useRef } from "react";
 
+import {
+  getCashflowTableBodyRows,
+  getVisibleCashflowRows,
+} from "./cashflow-table-rows";
 import type {
   CashflowNode,
   CashflowRootResponse,
   PeriodValues,
 } from "./cashflow-types";
+import { formatCashflowValue } from "./format-cashflow-value";
 import { cashflowChildrenQuery } from "./useCashflowData";
 import {
   cashflowExpansionReducer,
   initialCashflowExpansionState,
 } from "./useCashflowExpansion";
-
-const currencyFormatter = new Intl.NumberFormat("en-GB", {
-  currency: "GBP",
-  currencyDisplay: "symbol",
-  maximumFractionDigits: 0,
-  minimumFractionDigits: 0,
-  style: "currency",
-});
-
-export function formatCashflowValue(value: number) {
-  return currencyFormatter.format(value);
-}
-
-type VisibleRow = { node: CashflowNode; depth: number };
-
-type TableBodyRow =
-  | { type: "node"; node: CashflowNode; depth: number }
-  | { type: "loading"; id: string; depth: number };
-
-export function getVisibleCashflowRows(
-  nodes: CashflowNode[],
-  childrenByParentId: ReadonlyMap<string, CashflowNode[]>,
-  expandedGroupIds: ReadonlySet<string>,
-  depth = 0,
-): VisibleRow[] {
-  return nodes.flatMap((node) => {
-    const row = { node, depth };
-    const children = childrenByParentId.get(node.id) ?? [];
-
-    return node.hasChildren && expandedGroupIds.has(node.id)
-      ? [
-          row,
-          ...getVisibleCashflowRows(
-            children,
-            childrenByParentId,
-            expandedGroupIds,
-            depth + 1,
-          ),
-        ]
-      : [row];
-  });
-}
-
-export function getCashflowTableBodyRows(
-  visibleRows: VisibleRow[],
-  loadingParentIds: ReadonlySet<string>,
-): TableBodyRow[] {
-  return visibleRows.flatMap(({ node, depth }) => [
-    { type: "node" as const, node, depth },
-    ...(loadingParentIds.has(node.id)
-      ? [{ type: "loading" as const, id: `${node.id}-loading`, depth }]
-      : []),
-  ]);
-}
 
 function ValueCells({
   periods,
