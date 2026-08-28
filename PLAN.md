@@ -119,3 +119,62 @@ Update this section during implementation. Do not rewrite the plan above after t
 | Large-list behavior | Virtualized category rows                               | Implemented                | Added a bounded TanStack Virtual window for the scrollable category body and a deterministic 1,200-row generated branch to exercise it.                 |
 | Polymorphic label   | Button for expandable rows, static element for leaves   | Implemented                | Expandable rows use native buttons with explicit names and expanded state; non-expandable rows remain static text.                                      |
 | Verification        | Format, lint, build, manual interaction check           | Implemented                | Formatting, 13 unit tests, lint, the standard production build, and desktop-browser checks of the rendered table plus Inflow expansion pass all passed. |
+
+## Follow-up: cashflow componentization
+
+This follow-up preserves the completed challenge behaviour while making the cashflow feature easier to navigate and reuse. Feature-owned code stays together under `src/features/cashflow`; `components` is a child of that feature, not a sibling. A top-level `src/components` folder is reserved for UI with consumers in more than one feature.
+
+### Target structure
+
+```text
+src/features/cashflow/
+  components/
+    CashflowDataState.tsx
+    CashflowTable.tsx
+    CashflowTableHeader.tsx
+    CashflowOpeningBalanceRow.tsx
+    CashflowNodeRow.tsx
+    CashflowLoadingChildrenRow.tsx
+    CashflowValueCells.tsx
+  hooks/
+    useCashflowChildren.ts
+    useCashflowVirtualRows.ts
+  cashflow-api.ts
+  cashflow-table-rows.ts
+  cashflow-types.ts
+  format-cashflow-value.ts
+  mock-data.ts
+  useCashflowData.ts
+  useCashflowExpansion.ts
+```
+
+`CashflowDataState` moves into `components` because it is the feature's UI entry point. API contracts, mock data, types, pure table derivation, formatting, and data/expansion hooks remain at the feature root. The two new hooks are justified by their stateful third-party integrations; simple computed values and one-off callbacks do not become hooks.
+
+### Work packages
+
+| ID  | Task                                  | Done when                                                                                                                                                                                                                 |
+| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7   | Extract pure cashflow table logic     | Currency formatting plus visible/loading-row derivation live in focused non-React modules; their tests move with them and cover the current behaviour.                                                                    |
+| 8   | Extract feature-owned row components  | The header, opening-balance row, node row, lazy-loading row, and reusable value cells live in `src/features/cashflow/components`; accessibility semantics remain covered by unit tests.                                   |
+| 9   | Extract integration hooks and compose | Child-query aggregation and virtualization each have a focused hook; `CashflowTable` is table composition only, with no behaviour change. Updated tests cover the same expansion, lazy-loading, and large-list behaviour. |
+| 10  | Verify refactor                       | All imports are feature-local, no premature generic components are introduced, and tests, format, lint, webpack production build, and manual interaction checks pass.                                                     |
+
+### Acceptance checklist
+
+- [ ] Cashflow-specific UI is in `src/features/cashflow/components`, while only cross-feature UI may move to a top-level `src/components` in the future.
+- [ ] Each extracted component has one rendering responsibility and no duplicated period-value markup.
+- [ ] Pure row derivation and value formatting are outside React components and are unit-tested directly.
+- [ ] Child-query management and virtualization are isolated in focused hooks; simple helpers are not disguised as hooks.
+- [ ] The refactor preserves the completed challenge's API shape, accessibility semantics, expansion behaviour, sticky columns, and virtualization.
+- [ ] `npm test`, `npm run format:check`, `npm run lint`, and `npm run build -- --webpack` pass.
+
+### Outcome and decision log
+
+Update this table as each follow-up package is implemented. Do not amend the completed challenge outcome log above.
+
+| Item | Planned outcome                       | Actual outcome / deviation | Reason |
+| ---- | ------------------------------------- | -------------------------- | ------ |
+| 7    | Extract pure cashflow table logic     | Not started                | —      |
+| 8    | Extract feature-owned row components  | Not started                | —      |
+| 9    | Extract integration hooks and compose | Not started                | —      |
+| 10   | Verify refactor                       | Not started                | —      |
