@@ -110,10 +110,10 @@ No package adds functionality outside the stated challenge. For example, sorting
 
 Update this section during implementation. Do not rewrite the plan above after the fact.
 
-| Item                | Planned outcome                                       | Actual outcome / deviation | Reason |
-| ------------------- | ----------------------------------------------------- | -------------------------- | ------ |
-| Data contract       | Lazy root and child requests                          | Pending                    |        |
-| Table interaction   | Reducer-backed expand/collapse                        | Pending                    |        |
-| Large-list behavior | Virtualized category rows                             | Pending                    |        |
-| Polymorphic label   | Button for expandable rows, static element for leaves | Pending                    |        |
-| Verification        | Format, lint, build, manual interaction check         | Pending                    |        |
+| Item                | Planned outcome                                       | Actual outcome / deviation | Reason                                                                                                           |
+| ------------------- | ----------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Data contract       | Lazy root and child requests                          | Implemented                | Added deterministic periods, opening balances, root rows, and direct-child responses behind a 600 ms mock delay. |
+| Table interaction   | Reducer-backed expand/collapse                        | Pending                    |                                                                                                                  |
+| Large-list behavior | Virtualized category rows                             | Pending                    |                                                                                                                  |
+| Polymorphic label   | Button for expandable rows, static element for leaves | Pending                    |                                                                                                                  |
+| Verification        | Format, lint, build, manual interaction check         | Pending                    |                                                                                                                  |
