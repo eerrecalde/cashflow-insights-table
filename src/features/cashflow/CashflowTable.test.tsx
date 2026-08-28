@@ -5,9 +5,14 @@ import { describe, expect, it } from "vitest";
 import {
   CashflowTable,
   formatCashflowValue,
+  getCashflowTableBodyRows,
   getVisibleCashflowRows,
 } from "./CashflowTable";
-import { getCashflowChildren, getRootCashflowData } from "./mock-data";
+import {
+  generateCashflowCategoryNodes,
+  getCashflowChildren,
+  getRootCashflowData,
+} from "./mock-data";
 
 function renderTable(data: ReturnType<typeof getRootCashflowData>) {
   return renderToStaticMarkup(
@@ -60,5 +65,24 @@ describe("CashflowTable", () => {
       "inflow-other",
       "outflow",
     ]);
+  });
+
+  it("keeps a generated large category tree as individually addressable rows", () => {
+    const generatedNodes = generateCashflowCategoryNodes({
+      count: 1_200,
+      parentId: "operations",
+      section: "outflow",
+    });
+    const rows = getCashflowTableBodyRows(
+      generatedNodes.map((node) => ({ node, depth: 2 })),
+      new Set(),
+    );
+
+    expect(rows).toHaveLength(1_200);
+    expect(rows[0]).toMatchObject({ type: "node", depth: 2 });
+    expect(rows.at(-1)).toMatchObject({
+      type: "node",
+      node: { id: "operations-generated-1200" },
+    });
   });
 });

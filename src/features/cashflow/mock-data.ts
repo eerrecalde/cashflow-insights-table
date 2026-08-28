@@ -39,6 +39,30 @@ const node = (
   values: values(...amounts),
 });
 
+export function generateCashflowCategoryNodes({
+  count,
+  parentId,
+  section,
+}: {
+  count: number;
+  parentId: string;
+  section: CashflowSection;
+}): CashflowNode[] {
+  const sign = section === "inflow" ? 1 : -1;
+
+  return Array.from({ length: count }, (_, index) => {
+    const baseAmount = (index % 29) * 175 + 240;
+
+    return node(
+      `${parentId}-generated-${index + 1}`,
+      parentId,
+      section,
+      `Generated category ${index + 1}`,
+      periods.map((_, periodIndex) => sign * (baseAmount + periodIndex * 35)),
+    );
+  });
+}
+
 export const openingBalances = values(
   128_450,
   143_120,
@@ -173,6 +197,11 @@ const childNodes: Record<string, CashflowNode[]> = {
       "Marketing",
       [-11_030, -15_370, -19_700, -16_445, -19_800, -17_000],
     ),
+    ...generateCashflowCategoryNodes({
+      count: 1_200,
+      parentId: "outflow-operations",
+      section: "outflow",
+    }),
   ],
 };
 

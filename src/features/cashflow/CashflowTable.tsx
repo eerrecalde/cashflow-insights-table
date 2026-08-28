@@ -1,7 +1,8 @@
 "use client";
 
 import { useQueries } from "@tanstack/react-query";
-import { useReducer } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useReducer, useRef } from "react";
 
 import type {
   CashflowNode,
@@ -28,6 +29,10 @@ export function formatCashflowValue(value: number) {
 
 type VisibleRow = { node: CashflowNode; depth: number };
 
+type TableBodyRow =
+  | { type: "node"; node: CashflowNode; depth: number }
+  | { type: "loading"; id: string; depth: number };
+
 export function getVisibleCashflowRows(
   nodes: CashflowNode[],
   childrenByParentId: ReadonlyMap<string, CashflowNode[]>,
@@ -50,6 +55,18 @@ export function getVisibleCashflowRows(
         ]
       : [row];
   });
+}
+
+export function getCashflowTableBodyRows(
+  visibleRows: VisibleRow[],
+  loadingParentIds: ReadonlySet<string>,
+): TableBodyRow[] {
+  return visibleRows.flatMap(({ node, depth }) => [
+    { type: "node" as const, node, depth },
+    ...(loadingParentIds.has(node.id)
+      ? [{ type: "loading" as const, id: `${node.id}-loading`, depth }]
+      : []),
+  ]);
 }
 
 function ValueCells({
@@ -149,6 +166,7 @@ export function CashflowTable({
   openingBalances,
   nodes,
 }: CashflowRootResponse) {
+  const scrollElementRef = useRef<HTMLDivElement>(null);
   const [expansion, dispatch] = useReducer(
     cashflowExpansionReducer,
     initialCashflowExpansionState,
@@ -171,6 +189,29 @@ export function CashflowTable({
   const queryByParentId = new Map(
     expandedNodeIds.map((nodeId, index) => [nodeId, childQueries[index]]),
   );
+  const loadingParentIds = new Set(
+    visibleRows
+      .filter(
+        ({ node }) =>
+          node.hasChildren &&
+          expansion.expandedGroupIds.has(node.id) &&
+          queryByParentId.get(node.id)?.isPending,
+      )
+      .map(({ node }) => node.id),
+  );
+  const tableBodyRows = getCashflowTableBodyRows(visibleRows, loadingParentIds);
+  const rowVirtualizer = useVirtualizer({
+    count: tableBodyRows.length,
+    estimateSize: () => 49,
+    getItemKey: (index) => {
+      const row = tableBodyRows[index];
+      return row?.type === "node" ? row.node.id : (row?.id ?? index);
+    },
+    getScrollElement: () => scrollElementRef.current,
+    initialRect: { height: 600, width: 0 },
+    overscan: 8,
+  });
+  const virtualRows = rowVirtualizer.getVirtualItems();
 
   function toggleNode(node: CashflowNode) {
     dispatch({
@@ -193,7 +234,10 @@ export function CashflowTable({
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm">
+      <div
+        ref={scrollElementRef}
+        className="max-h-[70vh] overflow-auto rounded-xl border border-zinc-200 bg-white shadow-sm"
+      >
         <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-sm">
           <caption className="sr-only">
             Cashflow opening balances, inflow, and outflow by period
@@ -227,33 +271,48 @@ export function CashflowTable({
               </th>
               <ValueCells periods={periods} values={openingBalances} />
             </tr>
-            {visibleRows.flatMap(({ node, depth }) => {
-              const query = queryByParentId.get(node.id);
-              const isLoadingChildren =
-                node.hasChildren &&
-                expansion.expandedGroupIds.has(node.id) &&
-                query?.isPending;
+            {virtualRows[0]?.start ? (
+              <tr aria-hidden="true">
+                <td
+                  colSpan={periods.length + 1}
+                  style={{ height: virtualRows[0].start }}
+                />
+              </tr>
+            ) : null}
+            {virtualRows.map((virtualRow) => {
+              const row = tableBodyRows[virtualRow.index];
 
-              return [
+              if (!row) return null;
+
+              return row.type === "node" ? (
                 <NodeRow
-                  key={node.id}
-                  node={node}
-                  depth={depth}
+                  key={virtualRow.key}
+                  node={row.node}
+                  depth={row.depth}
                   periods={periods}
-                  expanded={expansion.expandedGroupIds.has(node.id)}
+                  expanded={expansion.expandedGroupIds.has(row.node.id)}
                   onToggle={toggleNode}
-                />,
-                ...(isLoadingChildren
-                  ? [
-                      <LoadingChildrenRow
-                        key={`${node.id}-loading`}
-                        depth={depth}
-                        periodCount={periods.length}
-                      />,
-                    ]
-                  : []),
-              ];
+                />
+              ) : (
+                <LoadingChildrenRow
+                  key={virtualRow.key}
+                  depth={row.depth}
+                  periodCount={periods.length}
+                />
+              );
             })}
+            {virtualRows.length > 0 ? (
+              <tr aria-hidden="true">
+                <td
+                  colSpan={periods.length + 1}
+                  style={{
+                    height:
+                      rowVirtualizer.getTotalSize() -
+                      (virtualRows.at(-1)?.end ?? 0),
+                  }}
+                />
+              </tr>
+            ) : null}
           </tbody>
         </table>
       </div>
