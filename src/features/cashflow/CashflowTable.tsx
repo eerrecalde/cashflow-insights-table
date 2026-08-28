@@ -1,8 +1,18 @@
+"use client";
+
+import { useQueries } from "@tanstack/react-query";
+import { useReducer } from "react";
+
 import type {
   CashflowNode,
   CashflowRootResponse,
   PeriodValues,
 } from "./cashflow-types";
+import { cashflowChildrenQuery } from "./useCashflowData";
+import {
+  cashflowExpansionReducer,
+  initialCashflowExpansionState,
+} from "./useCashflowExpansion";
 
 const currencyFormatter = new Intl.NumberFormat("en-GB", {
   currency: "GBP",
@@ -14,6 +24,32 @@ const currencyFormatter = new Intl.NumberFormat("en-GB", {
 
 export function formatCashflowValue(value: number) {
   return currencyFormatter.format(value);
+}
+
+type VisibleRow = { node: CashflowNode; depth: number };
+
+export function getVisibleCashflowRows(
+  nodes: CashflowNode[],
+  childrenByParentId: ReadonlyMap<string, CashflowNode[]>,
+  expandedGroupIds: ReadonlySet<string>,
+  depth = 0,
+): VisibleRow[] {
+  return nodes.flatMap((node) => {
+    const row = { node, depth };
+    const children = childrenByParentId.get(node.id) ?? [];
+
+    return node.hasChildren && expandedGroupIds.has(node.id)
+      ? [
+          row,
+          ...getVisibleCashflowRows(
+            children,
+            childrenByParentId,
+            expandedGroupIds,
+            depth + 1,
+          ),
+        ]
+      : [row];
+  });
 }
 
 function ValueCells({
@@ -34,24 +70,76 @@ function ValueCells({
   });
 }
 
-function SectionRow({
+function NodeRow({
   node,
+  depth,
   periods,
-}: Pick<CashflowRootResponse, "periods"> & { node: CashflowNode }) {
-  const tone =
-    node.section === "inflow"
+  expanded,
+  onToggle,
+}: Pick<CashflowRootResponse, "periods"> & {
+  node: CashflowNode;
+  depth: number;
+  expanded: boolean;
+  onToggle: (node: CashflowNode) => void;
+}) {
+  const isSection = node.kind === "section";
+  const tone = isSection
+    ? node.section === "inflow"
       ? "border-emerald-200 bg-emerald-50/70"
-      : "border-rose-200 bg-rose-50/70";
+      : "border-rose-200 bg-rose-50/70"
+    : "border-zinc-100 bg-white";
 
   return (
     <tr className={`border-y ${tone}`}>
       <th
         scope="row"
-        className="sticky left-0 z-10 min-w-64 border-r border-inherit bg-inherit px-5 py-3 text-left font-semibold text-zinc-950"
+        className={`sticky left-0 z-10 min-w-64 border-r border-inherit bg-inherit py-3 pr-5 text-left ${
+          isSection
+            ? "font-semibold text-zinc-950"
+            : "font-medium text-zinc-800"
+        }`}
+        style={{ paddingLeft: `${1.25 + depth * 1.5}rem` }}
       >
-        {node.label}
+        {node.hasChildren ? (
+          <button
+            type="button"
+            aria-expanded={expanded}
+            className="inline-flex items-center gap-2 rounded text-left hover:text-zinc-600 focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:outline-none"
+            onClick={() => onToggle(node)}
+          >
+            <span aria-hidden="true" className="text-xs">
+              {expanded ? "▾" : "▸"}
+            </span>
+            {node.label}
+          </button>
+        ) : (
+          <span>{node.label}</span>
+        )}
       </th>
       <ValueCells periods={periods} values={node.values} />
+    </tr>
+  );
+}
+
+function LoadingChildrenRow({
+  depth,
+  periodCount,
+}: {
+  depth: number;
+  periodCount: number;
+}) {
+  return (
+    <tr
+      aria-live="polite"
+      className="border-b border-zinc-100 bg-white text-zinc-500"
+    >
+      <td
+        className="sticky left-0 z-10 border-r border-zinc-100 bg-white py-3 pr-5 text-sm"
+        style={{ paddingLeft: `${1.25 + (depth + 1) * 1.5}rem` }}
+      >
+        Loading categories…
+      </td>
+      <td colSpan={periodCount} />
     </tr>
   );
 }
@@ -61,6 +149,36 @@ export function CashflowTable({
   openingBalances,
   nodes,
 }: CashflowRootResponse) {
+  const [expansion, dispatch] = useReducer(
+    cashflowExpansionReducer,
+    initialCashflowExpansionState,
+  );
+  const expandedNodeIds = [...expansion.expandedGroupIds];
+  const childQueries = useQueries({
+    queries: expandedNodeIds.map((nodeId) => cashflowChildrenQuery(nodeId)),
+  });
+  const childrenByParentId = new Map(
+    expandedNodeIds.map((nodeId, index) => [
+      nodeId,
+      childQueries[index]?.data?.nodes ?? [],
+    ]),
+  );
+  const visibleRows = getVisibleCashflowRows(
+    nodes,
+    childrenByParentId,
+    expansion.expandedGroupIds,
+  );
+  const queryByParentId = new Map(
+    expandedNodeIds.map((nodeId, index) => [nodeId, childQueries[index]]),
+  );
+
+  function toggleNode(node: CashflowNode) {
+    dispatch({
+      type: node.kind === "section" ? "toggle-section" : "toggle-group",
+      id: node.id,
+    });
+  }
+
   return (
     <section aria-labelledby="cashflow-table-title">
       <div className="mb-5">
@@ -109,9 +227,33 @@ export function CashflowTable({
               </th>
               <ValueCells periods={periods} values={openingBalances} />
             </tr>
-            {nodes.map((node) => (
-              <SectionRow key={node.id} node={node} periods={periods} />
-            ))}
+            {visibleRows.flatMap(({ node, depth }) => {
+              const query = queryByParentId.get(node.id);
+              const isLoadingChildren =
+                node.hasChildren &&
+                expansion.expandedGroupIds.has(node.id) &&
+                query?.isPending;
+
+              return [
+                <NodeRow
+                  key={node.id}
+                  node={node}
+                  depth={depth}
+                  periods={periods}
+                  expanded={expansion.expandedGroupIds.has(node.id)}
+                  onToggle={toggleNode}
+                />,
+                ...(isLoadingChildren
+                  ? [
+                      <LoadingChildrenRow
+                        key={`${node.id}-loading`}
+                        depth={depth}
+                        periodCount={periods.length}
+                      />,
+                    ]
+                  : []),
+              ];
+            })}
           </tbody>
         </table>
       </div>

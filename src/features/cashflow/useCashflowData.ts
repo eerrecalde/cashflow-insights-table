@@ -2,7 +2,7 @@
 
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-import { fetchRootCashflowData } from "./cashflow-api";
+import { fetchCashflowChildren, fetchRootCashflowData } from "./cashflow-api";
 
 export const cashflowRootQuery = queryOptions({
   queryKey: ["cashflow", "root"] as const,
@@ -12,4 +12,12 @@ export const cashflowRootQuery = queryOptions({
 
 export function useCashflowData() {
   return useQuery(cashflowRootQuery);
+}
+
+export function cashflowChildrenQuery(parentId: string) {
+  return queryOptions({
+    queryKey: ["cashflow", "children", parentId] as const,
+    queryFn: () => fetchCashflowChildren(parentId),
+    staleTime: 30_000,
+  });
 }

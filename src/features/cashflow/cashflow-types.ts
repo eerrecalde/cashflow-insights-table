@@ -29,3 +29,10 @@ export type CashflowRootResponse = {
 export type CashflowChildrenResponse = {
   nodes: CashflowNode[];
 };
+
+export type CashflowExpansionState = {
+  expandedGroupIds: Set<string>;
+};
+
+export type CashflowExpansionAction =
+  { type: "toggle-section"; id: string } | { type: "toggle-group"; id: string };
