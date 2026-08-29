@@ -12,7 +12,12 @@ export const periods: Period[] = [
   { id: "2026-05", date: "2026-05-01", label: "May 2026" },
   { id: "2026-06", date: "2026-06-01", label: "Jun 2026" },
   { id: "2026-07", date: "2026-07-01", label: "Jul 2026" },
-  { id: "2026-08", date: "2026-08-01", label: "Aug 2026" },
+  {
+    id: "2026-08",
+    date: "2026-08-01",
+    label: "Aug 2026",
+    isCurrent: true,
+  },
   { id: "2026-09", date: "2026-09-01", label: "Sep 2026" },
 ];
 
@@ -35,6 +40,7 @@ const node = (
   amounts: number[],
   hasChildren = false,
   kind: CashflowNode["kind"] = hasChildren ? "group" : "category",
+  accentColor?: string,
 ): CashflowNode => ({
   id,
   parentId,
@@ -42,6 +48,7 @@ const node = (
   section,
   label,
   hasChildren,
+  accentColor,
   values: values(...amounts),
 });
 
@@ -65,6 +72,9 @@ export function generateCashflowCategoryNodes({
       section,
       `Generated category ${index + 1}`,
       periods.map((_, periodIndex) => sign * (baseAmount + periodIndex * 35)),
+      false,
+      "category",
+      section === "inflow" ? "#0ea5e9" : "#84cc16",
     );
   });
 }
@@ -127,6 +137,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "inflow",
       "Subscriptions",
       [45_600, 48_200, 50_100, 53_900, 57_300, 60_400],
+      false,
+      "category",
+      "#0ea5e9",
     ),
     node(
       "inflow-services",
@@ -134,6 +147,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "inflow",
       "Professional services",
       [18_200, 22_500, 16_400, 24_600, 26_100, 27_800],
+      false,
+      "category",
+      "#0ea5e9",
     ),
     node(
       "inflow-other",
@@ -151,6 +167,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "inflow",
       "Interest received",
       [320, 350, 410, 470, 520, 600],
+      false,
+      "category",
+      "#0ea5e9",
     ),
     node(
       "inflow-reimbursements",
@@ -158,6 +177,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "inflow",
       "Reimbursements",
       [5_480, 4_200, 5_100, 7_730, 8_400, 9_100],
+      false,
+      "category",
+      "#0ea5e9",
     ),
     node(
       "inflow-tax-refunds",
@@ -165,6 +187,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "inflow",
       "Tax refunds",
       [14_300, 16_000, 16_290, 19_800, 20_580, 21_500],
+      false,
+      "category",
+      "#0ea5e9",
     ),
   ],
   outflow: [
@@ -190,6 +215,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "outflow",
       "Other expenses",
       [-13_200, -14_500, -18_000, -14_500, -18_500, -17_000],
+      false,
+      "category",
+      "#a855f7",
     ),
   ],
   "outflow-people": [
@@ -199,6 +227,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "outflow",
       "Salaries",
       [-31_500, -38_000, -46_900, -35_000, -49_000, -44_000],
+      false,
+      "category",
+      "#84cc16",
     ),
     node(
       "outflow-contractors",
@@ -206,6 +237,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "outflow",
       "Contractors",
       [-6_700, -8_100, -8_800, -7_300, -9_800, -8_600],
+      false,
+      "category",
+      "#84cc16",
     ),
   ],
   "outflow-operations": [
@@ -215,6 +249,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "outflow",
       "Software",
       [-6_800, -7_100, -7_425, -7_800, -8_125, -8_015],
+      false,
+      "category",
+      "#84cc16",
     ),
     node(
       "outflow-marketing",
@@ -222,6 +259,9 @@ const childNodes: Record<string, CashflowNode[]> = {
       "outflow",
       "Marketing",
       [-11_030, -15_370, -19_700, -16_445, -19_800, -17_000],
+      false,
+      "category",
+      "#84cc16",
     ),
     ...generateCashflowCategoryNodes({
       count: 1_200,

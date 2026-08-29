@@ -32,7 +32,8 @@ describe("cashflow row components", () => {
 
     for (const period of data.periods) {
       expect(markup).toContain(`dateTime="${period.date}"`);
-      expect(markup).toContain(period.label);
+      expect(markup).toContain(period.label.split(" ")[0]);
+      expect(markup).toContain(period.label.split(" ")[1]);
       expect(markup).toContain(
         formatCashflowValue(data.openingBalances[period.id]),
       );
@@ -76,6 +77,38 @@ describe("cashflow row components", () => {
       formatCashflowValue(expandableNode.values["2026-04"]),
     );
     expect(markup).toContain("border-zinc-300 bg-zinc-100");
+    expect(markup).toContain("group-hover:bg-sky-50");
+  });
+
+  it("highlights the current period and renders category accents", () => {
+    const currentPeriod = data.periods.find((period) => period.isCurrent);
+    const category = {
+      ...data.nodes[0],
+      id: "accented-category",
+      kind: "category" as const,
+      label: "Accented category",
+      hasChildren: false,
+      accentColor: "#0ea5e9",
+    };
+    const markup = renderToStaticMarkup(
+      <table>
+        <CashflowTableHeader periods={data.periods} />
+        <tbody>
+          <CashflowNodeRow
+            node={category}
+            depth={0}
+            periods={data.periods}
+            expanded={false}
+            onToggle={() => undefined}
+          />
+        </tbody>
+      </table>,
+    );
+
+    expect(currentPeriod).toBeDefined();
+    expect(markup).toContain("bg-lime-100");
+    expect(markup).toContain("bg-lime-50");
+    expect(markup).toContain("background-color:#0ea5e9");
   });
 
   it("announces lazy child loading", () => {

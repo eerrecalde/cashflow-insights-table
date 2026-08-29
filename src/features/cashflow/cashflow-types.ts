@@ -6,6 +6,7 @@ export type Period = {
   id: string;
   date: string;
   label: string;
+  isCurrent?: boolean;
 };
 
 export type PeriodValues = Record<string, number>;
@@ -17,6 +18,7 @@ export type CashflowNode = {
   section: CashflowSection;
   label: string;
   hasChildren: boolean;
+  accentColor?: string;
   values: PeriodValues;
 };
 
