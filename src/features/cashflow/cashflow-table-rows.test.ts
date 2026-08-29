@@ -8,7 +8,7 @@ import {
   generateCashflowCategoryNodes,
   getCashflowChildren,
   getRootCashflowData,
-} from "./mock-data";
+} from "../../mocks/cashflow/mock-data";
 
 describe("cashflow table rows", () => {
   it("only includes descendants after their parent is expanded", () => {

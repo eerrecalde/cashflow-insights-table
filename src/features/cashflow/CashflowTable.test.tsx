@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { CashflowTable } from "./CashflowTable";
 import { CashflowDataState } from "./components/CashflowDataState";
-import { getRootCashflowData } from "./mock-data";
+import { getRootCashflowData } from "../../mocks/cashflow/mock-data";
 
 function renderTable(data: ReturnType<typeof getRootCashflowData>) {
   return renderToStaticMarkup(

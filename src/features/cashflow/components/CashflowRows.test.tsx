@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { getRootCashflowData } from "../mock-data";
+import { getRootCashflowData } from "../../../mocks/cashflow/mock-data";
 import { formatCashflowValue } from "../format-cashflow-value";
 import { CashflowLoadingChildrenRow } from "./CashflowLoadingChildrenRow";
 import { CashflowNodeRow } from "./CashflowNodeRow";

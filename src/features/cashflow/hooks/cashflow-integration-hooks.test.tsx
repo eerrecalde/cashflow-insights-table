@@ -11,7 +11,7 @@ import {
   getCashflowChildren,
   getRootCashflowData,
   getCashflowScaleFixture,
-} from "../mock-data";
+} from "../../../mocks/cashflow/mock-data";
 import { useCashflowChildren } from "./useCashflowChildren";
 import { useCashflowVirtualRows } from "./useCashflowVirtualRows";
 
