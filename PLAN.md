@@ -178,3 +178,41 @@ Update this table as each follow-up package is implemented. Do not amend the com
 | 8    | Extract feature-owned row components  | Implemented                | Extracted the header, opening-balance row, node row, loading row, and shared period-value cells into feature-local components, with direct tests for table and accessible-control semantics.                                                                                                                                                                                                                                                                                 |
 | 9    | Extract integration hooks and compose | Implemented                | Moved child-query aggregation and virtualization into focused hooks, leaving `CashflowTable` to compose the table. Used React's supported `"use no memo"` directive around TanStack Virtual's mutable instance so `getVirtualItems()` is not cached by React Compiler. The React Hooks rule continues to warn because it cannot prove this mutable API is used locally; the hook returns only its current item snapshot and no global lint suppression was added.            |
 | 10   | Verify refactor                       | Implemented                | Moved the data-state UI into feature-local `components`, verified feature-local imports and the absence of premature generic components, and added a structural entry-point test. `npm test` (20 tests), formatting, lint, and `npm run build -- --webpack` pass; lint retains the documented TanStack Virtual compatibility warning. Manual internal-browser checks confirmed section expansion and lazy nested-group loading with the expected accessible expanded states. |
+
+## Follow-up: brief alignment and scale validation
+
+This follow-up closes the gaps identified by comparing the implementation with the technical-challenge brief. It does not add product features such as filtering, editing, charts, or export. The normal demo remains small enough to inspect manually; scale fixtures exist solely to establish that the table supports the stated 10k-100k category range.
+
+### Work packages
+
+| ID  | Task                                   | Done when                                                                                                                                                                                                          |
+| --- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 11  | Prove 10k-100k scale                   | Generated fixtures cover 10,000 and 100,000 categories without adding all rows to the DOM. Tests assert a bounded virtual window and retain direct-child lazy loading.                                             |
+| 12  | Clarify and cache the mock contract    | The route documents and returns cache-friendly responses, including appropriate cache headers. Root and child response responsibilities remain explicit, typed, and independently tested.                          |
+| 13  | Align the table with the CSV reference | The visual treatment is tightened toward the supplied reference while retaining clear section hierarchy, accessibility, sticky labels, horizontal scrolling, and non-jarring loading states.                       |
+| 14  | Remove incidental complexity           | Unused dependencies are removed. The TanStack Virtual React Compiler warning is resolved with a supported integration or retained only with a concise, evidence-based decision recorded in the outcome log.        |
+| 15  | Verify brief alignment                 | Unit and interaction tests cover scale, caching, and expansion; visual checks cover the reference-oriented table shell; `npm test`, `npm run format:check`, `npm run lint`, and `npm run build -- --webpack` pass. |
+
+### Acceptance checklist
+
+- [ ] The codebase exercises both 10,000- and 100,000-category fixtures, with a bounded rendered-row count.
+- [ ] Tree descendants are still requested only when their parent is expanded.
+- [ ] Root and child responses are cacheable through stable request URLs and explicit route cache headers.
+- [ ] The table remains recognisably CSV-like rather than introducing new dashboard features.
+- [ ] The first column remains sticky while period columns scroll horizontally.
+- [ ] Expand/collapse controls and loading states retain their existing accessible semantics.
+- [ ] No unused table library remains in production dependencies.
+- [ ] Any remaining React Compiler warning has a documented, supported rationale.
+- [ ] `npm test`, `npm run format:check`, `npm run lint`, and `npm run build -- --webpack` pass.
+
+### Outcome and decision log
+
+Update this table during implementation. Do not amend the preceding plans or outcome logs after the fact.
+
+| Item | Planned outcome | Actual outcome / deviation | Reason |
+| ---- | --------------- | -------------------------- | ------ |
+| 11   |                 |                            |        |
+| 12   |                 |                            |        |
+| 13   |                 |                            |        |
+| 14   |                 |                            |        |
+| 15   |                 |                            |        |
