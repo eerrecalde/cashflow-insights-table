@@ -1,19 +1,14 @@
 "use client";
 
-import { useQueries } from "@tanstack/react-query";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import { useReducer, useRef } from "react";
 
-import {
-  getCashflowTableBodyRows,
-  getVisibleCashflowRows,
-} from "./cashflow-table-rows";
 import { CashflowLoadingChildrenRow } from "./components/CashflowLoadingChildrenRow";
 import { CashflowNodeRow } from "./components/CashflowNodeRow";
 import { CashflowOpeningBalanceRow } from "./components/CashflowOpeningBalanceRow";
 import { CashflowTableHeader } from "./components/CashflowTableHeader";
 import type { CashflowNode, CashflowRootResponse } from "./cashflow-types";
-import { cashflowChildrenQuery } from "./useCashflowData";
+import { useCashflowChildren } from "./hooks/useCashflowChildren";
+import { useCashflowVirtualRows } from "./hooks/useCashflowVirtualRows";
 import {
   cashflowExpansionReducer,
   initialCashflowExpansionState,
@@ -29,47 +24,14 @@ export function CashflowTable({
     cashflowExpansionReducer,
     initialCashflowExpansionState,
   );
-  const expandedNodeIds = [...expansion.expandedGroupIds];
-  const childQueries = useQueries({
-    queries: expandedNodeIds.map((nodeId) => cashflowChildrenQuery(nodeId)),
-  });
-  const childrenByParentId = new Map(
-    expandedNodeIds.map((nodeId, index) => [
-      nodeId,
-      childQueries[index]?.data?.nodes ?? [],
-    ]),
-  );
-  const visibleRows = getVisibleCashflowRows(
+  const { loadingParentIds, tableBodyRows } = useCashflowChildren(
     nodes,
-    childrenByParentId,
     expansion.expandedGroupIds,
   );
-  const queryByParentId = new Map(
-    expandedNodeIds.map((nodeId, index) => [nodeId, childQueries[index]]),
+  const { rowVirtualizer, virtualRows } = useCashflowVirtualRows(
+    scrollElementRef,
+    tableBodyRows,
   );
-  const loadingParentIds = new Set(
-    visibleRows
-      .filter(
-        ({ node }) =>
-          node.hasChildren &&
-          expansion.expandedGroupIds.has(node.id) &&
-          queryByParentId.get(node.id)?.isPending,
-      )
-      .map(({ node }) => node.id),
-  );
-  const tableBodyRows = getCashflowTableBodyRows(visibleRows, loadingParentIds);
-  const rowVirtualizer = useVirtualizer({
-    count: tableBodyRows.length,
-    estimateSize: () => 49,
-    getItemKey: (index) => {
-      const row = tableBodyRows[index];
-      return row?.type === "node" ? row.node.id : (row?.id ?? index);
-    },
-    getScrollElement: () => scrollElementRef.current,
-    initialRect: { height: 600, width: 0 },
-    overscan: 8,
-  });
-  const virtualRows = rowVirtualizer.getVirtualItems();
 
   function toggleNode(node: CashflowNode) {
     dispatch({
