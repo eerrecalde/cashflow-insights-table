@@ -27,6 +27,8 @@ describe("cashflow row components", () => {
     expect(markup).toContain('<th scope="col"');
     expect(markup).toContain('<th scope="row"');
     expect(markup).toContain(">Opening balance</th>");
+    expect(markup).toContain("bg-zinc-100");
+    expect(markup).toContain("border-l border-zinc-200");
 
     for (const period of data.periods) {
       expect(markup).toContain(`dateTime="${period.date}"`);
@@ -73,6 +75,7 @@ describe("cashflow row components", () => {
     expect(markup).toContain(
       formatCashflowValue(expandableNode.values["2026-04"]),
     );
+    expect(markup).toContain("border-zinc-300 bg-zinc-100");
   });
 
   it("announces lazy child loading", () => {

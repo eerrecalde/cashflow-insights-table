@@ -42,14 +42,14 @@ export function CashflowTable({
 
   return (
     <section aria-labelledby="cashflow-table-title">
-      <div className="mb-5">
+      <div className="mb-6 border-b border-zinc-200 pb-5">
         <h1
           id="cashflow-table-title"
-          className="text-xl font-semibold text-zinc-950"
+          className="text-lg font-semibold tracking-tight text-zinc-950"
         >
           Cashflow insights
         </h1>
-        <p className="mt-1 text-sm text-zinc-600">
+        <p className="mt-1 text-sm text-zinc-500">
           Opening balances and projected cash movement by month.
         </p>
       </div>
@@ -57,9 +57,9 @@ export function CashflowTable({
       <div
         ref={scrollElementRef}
         aria-busy={loadingParentIds.size > 0}
-        className="max-h-[70vh] overflow-auto rounded-xl border border-zinc-200 bg-white shadow-sm"
+        className="max-h-[70vh] overflow-auto border border-zinc-300 bg-white"
       >
-        <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-sm">
+        <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-[13px]">
           <caption className="sr-only">
             Cashflow opening balances, inflow, and outflow by period
           </caption>

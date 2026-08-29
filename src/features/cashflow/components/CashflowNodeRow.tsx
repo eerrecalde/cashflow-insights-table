@@ -15,19 +15,17 @@ export function CashflowNodeRow({
 }) {
   const isSection = node.kind === "section";
   const tone = isSection
-    ? node.section === "inflow"
-      ? "border-emerald-200 bg-emerald-50/70"
-      : "border-rose-200 bg-rose-50/70"
-    : "border-zinc-100 bg-white";
+    ? "border-zinc-300 bg-zinc-100"
+    : "border-zinc-200 bg-white";
   const controlLabel = `${expanded ? "Collapse" : "Expand"} ${node.label}`;
 
   return (
-    <tr className={`border-y transition-colors ${tone}`}>
+    <tr className={`border-b ${tone}`}>
       <th
         scope="row"
-        className={`sticky left-0 z-10 min-w-64 border-r border-inherit bg-inherit py-3 pr-5 text-left ${
+        className={`sticky left-0 z-10 min-w-64 border-r border-inherit bg-inherit py-2.5 pr-4 text-left ${
           isSection
-            ? "font-semibold text-zinc-950"
+            ? "font-semibold tracking-[0.01em] text-zinc-950"
             : "font-medium text-zinc-800"
         }`}
         style={{ paddingLeft: `${1.25 + depth * 1.5}rem` }}
@@ -37,12 +35,12 @@ export function CashflowNodeRow({
             type="button"
             aria-label={controlLabel}
             aria-expanded={expanded}
-            className="inline-flex items-center gap-2 rounded-md text-left underline-offset-4 hover:text-zinc-600 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-600 focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="inline-flex items-center gap-1.5 text-left underline-offset-4 hover:text-zinc-600 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-600 focus-visible:ring-offset-2 focus-visible:outline-none"
             onClick={() => onToggle(node)}
           >
             <span
               aria-hidden="true"
-              className="grid size-4 place-items-center rounded-sm bg-zinc-200/70 text-[10px] leading-none text-zinc-700"
+              className="grid size-3.5 place-items-center text-[11px] leading-none text-zinc-500"
             >
               {expanded ? "▾" : "▸"}
             </span>

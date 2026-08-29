@@ -4,8 +4,8 @@ import { Providers } from "./providers";
 
 export default function Home() {
   return (
-    <div className="flex flex-1 bg-zinc-50 font-sans">
-      <main className="mx-auto w-full max-w-6xl px-6 py-12">
+    <div className="flex flex-1 bg-slate-50 font-sans">
+      <main className="mx-auto w-full max-w-[1440px] px-5 py-8 sm:px-8">
         <Providers>
           <CashflowDataState />
         </Providers>

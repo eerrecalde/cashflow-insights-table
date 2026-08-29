@@ -25,6 +25,8 @@ describe("CashflowTable", () => {
     expect(markup).toContain(
       "Cashflow opening balances, inflow, and outflow by period",
     );
+    expect(markup).toContain("border border-zinc-300 bg-white");
+    expect(markup).toContain("border-b border-zinc-200 pb-5");
   });
 
   it("exports the data-state entry point from the feature components", () => {

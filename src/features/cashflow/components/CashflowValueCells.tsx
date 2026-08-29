@@ -11,7 +11,7 @@ export function CashflowValueCells({
     return (
       <td
         key={period.id}
-        className="px-5 py-3 text-right whitespace-nowrap text-zinc-800 tabular-nums"
+        className="border-l border-zinc-200 px-4 py-2.5 text-right whitespace-nowrap text-zinc-800 tabular-nums"
       >
         {formatCashflowValue(value)}
       </td>
