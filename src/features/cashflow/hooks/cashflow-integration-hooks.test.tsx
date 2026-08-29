@@ -45,14 +45,12 @@ function VirtualRowCount({
   tableBodyRows: CashflowTableBodyRow[];
 }) {
   const scrollElementRef = useRef<HTMLDivElement>(null);
-  const { rowVirtualizer, virtualRows } = useCashflowVirtualRows(
+  const { totalSize, virtualRows } = useCashflowVirtualRows(
     scrollElementRef,
     tableBodyRows,
   );
 
-  return (
-    <output>{`${virtualRows.length}/${rowVirtualizer.getTotalSize()}`}</output>
-  );
+  return <output>{`${virtualRows.length}/${totalSize}`}</output>;
 }
 
 describe("cashflow integration hooks", () => {

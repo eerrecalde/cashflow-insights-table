@@ -9,13 +9,11 @@ export function useCashflowVirtualRows(
   scrollElementRef: RefObject<HTMLDivElement | null>,
   tableBodyRows: CashflowTableBodyRow[],
 ) {
-  // TanStack Virtual exposes a mutable instance. Opt out of React Compiler
-  // memoization so getVirtualItems() is reevaluated after scroll updates. The
-  // React Hooks integration rule still warns because it cannot verify this
-  // local usage; keep virtualizer methods inside this hook and do not disable
-  // that rule globally.
   "use no memo";
 
+  // TanStack Virtual exposes a mutable instance, which React Compiler's
+  // incompatible-library rule intentionally skips. Keep that supported opt-out
+  // local and expose only the current render snapshot to the table.
   const rowVirtualizer = useVirtualizer({
     count: tableBodyRows.length,
     estimateSize: () => 49,
@@ -29,7 +27,7 @@ export function useCashflowVirtualRows(
   });
 
   return {
-    rowVirtualizer,
+    totalSize: rowVirtualizer.getTotalSize(),
     virtualRows: rowVirtualizer.getVirtualItems(),
   };
 }

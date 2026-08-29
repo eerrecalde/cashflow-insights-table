@@ -28,7 +28,7 @@ export function CashflowTable({
     nodes,
     expansion.expandedGroupIds,
   );
-  const { rowVirtualizer, virtualRows } = useCashflowVirtualRows(
+  const { totalSize, virtualRows } = useCashflowVirtualRows(
     scrollElementRef,
     tableBodyRows,
   );
@@ -104,9 +104,7 @@ export function CashflowTable({
                 <td
                   colSpan={periods.length + 1}
                   style={{
-                    height:
-                      rowVirtualizer.getTotalSize() -
-                      (virtualRows.at(-1)?.end ?? 0),
+                    height: totalSize - (virtualRows.at(-1)?.end ?? 0),
                   }}
                 />
               </tr>
