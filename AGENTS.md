@@ -20,3 +20,7 @@ For this technical challenge, `PLAN.md` is the canonical task list. When a reque
 6. Finish and verify
 
 Before starting a numbered task, read its entry and relevant acceptance criteria in `PLAN.md`. Each task must add or update unit tests for its relevant behavior as part of that same task. After completing it, update the corresponding row in **Outcome and decision log** without rewriting the original plan.
+
+## Visual verification
+
+For any task that creates or changes a user-visible visual result, use the `visual-completion-proof` skill as the final verification step. Do not report visual work as complete without a current rendered check and screenshot; keep verification artifacts out of the repository unless requested.
