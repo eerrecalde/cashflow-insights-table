@@ -1,7 +1,7 @@
 "use client";
 
-import { useCashflowData } from "./useCashflowData";
-import { CashflowTable } from "./CashflowTable";
+import { CashflowTable } from "../CashflowTable";
+import { useCashflowData } from "../useCashflowData";
 
 function LoadingState() {
   return (

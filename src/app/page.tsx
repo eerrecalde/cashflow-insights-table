@@ -1,4 +1,4 @@
-import { CashflowDataState } from "@/features/cashflow/CashflowDataState";
+import { CashflowDataState } from "@/features/cashflow/components/CashflowDataState";
 
 import { Providers } from "./providers";
 
