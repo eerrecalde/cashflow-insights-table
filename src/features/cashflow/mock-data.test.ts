@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { getCashflowChildren, getRootCashflowData, periods } from "./mock-data";
+import {
+  cashflowScaleFixtureCounts,
+  getCashflowChildren,
+  getCashflowScaleFixture,
+  getRootCashflowData,
+  periods,
+} from "./mock-data";
 
 describe("getRootCashflowData", () => {
   it("returns the complete root model with opening balances for every period", () => {
@@ -48,4 +54,20 @@ describe("getCashflowChildren", () => {
   it("returns an empty collection for an unknown parent", () => {
     expect(getCashflowChildren("unknown-parent")).toEqual({ nodes: [] });
   });
+});
+
+describe("getCashflowScaleFixture", () => {
+  it.each(cashflowScaleFixtureCounts)(
+    "generates %i direct children without changing the demo tree",
+    (count) => {
+      const { parent, children } = getCashflowScaleFixture(count);
+
+      expect(parent.hasChildren).toBe(true);
+      expect(children).toHaveLength(count);
+      expect(children.every((child) => child.parentId === parent.id)).toBe(
+        true,
+      );
+      expect(children.at(-1)?.id).toBe(`${parent.id}-generated-${count}`);
+    },
+  );
 });

@@ -209,10 +209,10 @@ This follow-up closes the gaps identified by comparing the implementation with t
 
 Update this table during implementation. Do not amend the preceding plans or outcome logs after the fact.
 
-| Item | Planned outcome | Actual outcome / deviation | Reason |
-| ---- | --------------- | -------------------------- | ------ |
-| 11   |                 |                            |        |
-| 12   |                 |                            |        |
-| 13   |                 |                            |        |
-| 14   |                 |                            |        |
-| 15   |                 |                            |        |
+| Item | Planned outcome      | Actual outcome / deviation | Reason                                                                                                                                                                                                                                                                                |
+| ---- | -------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 11   | Prove 10k-100k scale | Implemented                | Added deterministic, direct-child scale fixtures for 10,000 and 100,000 categories. The integration tests assert each fixture retains a 25-row-or-fewer virtual window, while dedicated fixture coverage confirms all generated rows remain direct children of the expandable parent. |
+| 12   |                      |                            |                                                                                                                                                                                                                                                                                       |
+| 13   |                      |                            |                                                                                                                                                                                                                                                                                       |
+| 14   |                      |                            |                                                                                                                                                                                                                                                                                       |
+| 15   |                      |                            |                                                                                                                                                                                                                                                                                       |

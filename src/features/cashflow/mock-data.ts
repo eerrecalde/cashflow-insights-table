@@ -16,6 +16,12 @@ export const periods: Period[] = [
   { id: "2026-09", date: "2026-09-01", label: "Sep 2026" },
 ];
 
+/**
+ * Fixture sizes used to validate virtualization independently from the
+ * deliberately small, manually inspectable demo branch below.
+ */
+export const cashflowScaleFixtureCounts = [10_000, 100_000] as const;
+
 const values = (...amounts: number[]): PeriodValues =>
   Object.fromEntries(
     periods.map((period, index) => [period.id, amounts[index] ?? 0]),
@@ -61,6 +67,26 @@ export function generateCashflowCategoryNodes({
       periods.map((_, periodIndex) => sign * (baseAmount + periodIndex * 35)),
     );
   });
+}
+
+export function getCashflowScaleFixture(count: number) {
+  const parentId = `outflow-scale-${count}`;
+
+  return {
+    parent: node(
+      parentId,
+      "outflow",
+      "outflow",
+      `Scale fixture (${count.toLocaleString("en-GB")} categories)`,
+      [-1, -1, -1, -1, -1, -1],
+      true,
+    ),
+    children: generateCashflowCategoryNodes({
+      count,
+      parentId,
+      section: "outflow",
+    }),
+  };
 }
 
 export const openingBalances = values(

@@ -7,9 +7,10 @@ import { describe, expect, it } from "vitest";
 import type { CashflowTableBodyRow } from "../cashflow-table-rows";
 import { cashflowChildrenQuery } from "../useCashflowData";
 import {
-  generateCashflowCategoryNodes,
+  cashflowScaleFixtureCounts,
   getCashflowChildren,
   getRootCashflowData,
+  getCashflowScaleFixture,
 } from "../mock-data";
 import { useCashflowChildren } from "./useCashflowChildren";
 import { useCashflowVirtualRows } from "./useCashflowVirtualRows";
@@ -80,22 +81,27 @@ describe("cashflow integration hooks", () => {
     expect(markup).not.toContain("inflow-loading");
   });
 
-  it("keeps a large category branch within a bounded virtual window", () => {
-    const tableBodyRows = generateCashflowCategoryNodes({
-      count: 1_200,
-      parentId: "operations",
-      section: "outflow",
-    }).map((node) => ({ type: "node" as const, node, depth: 2 }));
-    const markup = renderToStaticMarkup(
-      <VirtualRowCount tableBodyRows={tableBodyRows} />,
-    );
-    const [virtualRowCount, totalSize] = markup
-      .replace(/<[^>]+>/g, "")
-      .split("/")
-      .map(Number);
+  it.each(cashflowScaleFixtureCounts)(
+    "keeps %i direct children within a bounded virtual window",
+    (count) => {
+      const { children } = getCashflowScaleFixture(count);
+      const tableBodyRows = children.map((node) => ({
+        type: "node" as const,
+        node,
+        depth: 2,
+      }));
+      const markup = renderToStaticMarkup(
+        <VirtualRowCount tableBodyRows={tableBodyRows} />,
+      );
+      const [virtualRowCount, totalSize] = markup
+        .replace(/<[^>]+>/g, "")
+        .split("/")
+        .map(Number);
 
-    expect(virtualRowCount).toBeGreaterThan(0);
-    expect(virtualRowCount).toBeLessThan(tableBodyRows.length);
-    expect(totalSize).toBe(1_200 * 49);
-  });
+      expect(virtualRowCount).toBeGreaterThan(0);
+      expect(virtualRowCount).toBeLessThanOrEqual(25);
+      expect(virtualRowCount).toBeLessThan(tableBodyRows.length);
+      expect(totalSize).toBe(count * 49);
+    },
+  );
 });
