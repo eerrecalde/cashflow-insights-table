@@ -5,7 +5,7 @@ import type {
   CashflowSection,
   Period,
   PeriodValues,
-} from "../../features/cashflow/cashflow-types";
+} from "@/features/cashflow/cashflow-types";
 
 export const periods: Period[] = [
   { id: "2026-04", date: "2026-04-01", label: "Apr 2026" },
